@@ -54,9 +54,9 @@ onready var BulletButton := preload("res://game/bullet/bullet.tscn")
 onready var TargetButton := preload("res://game/target/target.tscn")
 onready var HowToPlay := preload("res://how_to_play/how_to_play.tscn")
 #onready var grid := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/GridContainer"
-onready var bullets := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/VBoxContainer/bullets"
+onready var bullets := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/VSplitContainer/bullets"
 
-onready var targets := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/VBoxContainer/targets"
+onready var targets := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/VSplitContainer/targets"
 
 onready var timer_label := $"MarginContainer/VBoxContainer/BarContainer/Container/Time"
 onready var level_label := $"MarginContainer/VBoxContainer/BarContainer/Container/Level"
@@ -70,6 +70,7 @@ onready var total_time = $PanelInformation/GlobalContainer/MarginContainer/VBoxC
 onready var total_attempts = $PanelInformation/GlobalContainer/MarginContainer/VBoxContainer/HBoxContainer/ResultContainer/StatisticsContainer/AttemptsContainer/TotalAttempts
 onready var show_panel_information := $ShowPanelInformation
 
+onready var tween = $Tween
 
 #  [OPTIONAL_BUILT-IN_VIRTUAL_METHOD]
 #func _init() -> void:
@@ -322,18 +323,36 @@ func _on_failed_attempt(bullet, target) -> void:
 	print("nao combinou")
 	failed_attempt += 1
 	
+
 func _on_successfull_attempt(bullet, target) -> void:
 	
 	successfull_attempt += 1	
-	bullet.set_position(Vector2(-220,0))
-	target.set_position(Vector2(-220,0))
+	#bullet.set_position(Vector2(-220,0))
+	bullet.set_position(target.get_position())
+	var timeTween = create_tween()
+	print(self.rect_global_position)	
+	
+	timeTween.tween_property(bullet, "rect_global_position", OS.get_screen_size()/2 + Vector2(0,-250), 0.1)
+	timeTween.tween_property(target, "rect_global_position", OS.get_screen_size()/2 + Vector2(-450,-250), 0.1)
+	timeTween.parallel().tween_property(bullet, "rect_size",  Vector2(400,400), 0.1)
+	timeTween.parallel().tween_property(target, "rect_size",  Vector2(400,400), 0.1)
+	timeTween.tween_property(bullet, "rect_global_position", OS.get_screen_size()/2 + Vector2(0,-250), 0.5)
+	timeTween.tween_property(target, "rect_global_position", OS.get_screen_size()/2 + Vector2(-450,-250), 0.5)
+	timeTween.tween_property(bullet, "modulate:a",0.0 , 0.25)
+	timeTween.tween_property(target, "modulate:a",0.0 , 0.25)
+	timeTween.tween_property(bullet, "rect_global_position",  Vector2(-2200,-2050), 0.001)
+	timeTween.tween_property(target, "rect_global_position",  Vector2(-2200,-2050), 0.001)
+
+	#yield(timeTween, 'tween_completed')
+	#bullet.set_position(Vector2(-2200,-2000))
+	
+	#target.set_position(Vector2(-220,0))
 	print("combinou" + str(successfull_attempt)+ " de "+  str(total_cards/2) )
 	if successfull_attempt == total_cards/2:		
 		emit_signal("show_panel_information")
 		
 	#var restart_button: Button = $MarginContainer/VBoxContainer/BarContainer/Restart
 	
-
 func _reset_counters() -> void:
 	timer.stop()
 	set_timer_has_starded(false)
