@@ -8,7 +8,8 @@ extends Control
 
 #  [SIGNALS]
 signal add_cards
-signal failed_attempt
+#signal failed_attempt
+
 signal start_timer
 signal show_panel_information
 
@@ -26,8 +27,8 @@ enum GameMode {EASY, MEDIUM, HARD}
 
 #  [PUBLIC_VARIABLES]
 var failed_attempt: int = 0
-
-
+var successfull_attempt: int = 0
+var total_cards: int = 0
 #  [PRIVATE_VARIABLES]
 
 var _bullets: Array = Array() \
@@ -53,8 +54,9 @@ onready var BulletButton := preload("res://game/bullet/bullet.tscn")
 onready var TargetButton := preload("res://game/target/target.tscn")
 onready var HowToPlay := preload("res://how_to_play/how_to_play.tscn")
 #onready var grid := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/GridContainer"
-onready var bullets := $"MarginContainer/VBoxContainer/bullets"
-onready var targets := $"MarginContainer/VBoxContainer/targets"
+onready var bullets := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/VBoxContainer/bullets"
+
+onready var targets := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/VBoxContainer/targets"
 
 onready var timer_label := $"MarginContainer/VBoxContainer/BarContainer/Container/Time"
 onready var level_label := $"MarginContainer/VBoxContainer/BarContainer/Container/Level"
@@ -80,6 +82,7 @@ func _ready() -> void:
 	
 	connect("add_cards", self, "_on_add_cards")
 	connect("failed_attempt", self, "_on_failed_attempt")
+	connect("successfull_attempt", self, "_on_successfull_attempt")
 	connect("start_timer", self, "_on_start_timer")
 	connect("show_panel_information", self, "_on_show_PanelInformation")
 	set_current_mode(ChangeLevel.request_mode)
@@ -264,7 +267,6 @@ func _load_theme() -> void:
 
 
 func _make_grid(mode: int):
-	var total_cards: int = 0
 	var card_size: Vector2 = Vector2.ZERO
 	
 	match(mode):
@@ -292,7 +294,8 @@ func _make_grid(mode: int):
 		if bullet.has("image"):
 			new_card.set_front_image(bullet["image"])
 			
-			#new_card.connect("card_turned", self, "_on_card_turned")
+			new_card.connect("card_moved", self, "_on_card_moved")		
+			
 	
 		var target: Dictionary =  get_target_by_matching_id(bullet["matching_id"])# random_target()		
 		
@@ -302,10 +305,31 @@ func _make_grid(mode: int):
 		new_card_target.set_matching_id(target["matching_id"])
 		if target.has("image"):
 			new_card_target.set_front_image(target["image"])
-			
-			#new_card.connect("card_turned", self, "_on_card_turned")		
+			new_card_target.connect("failed_attempt", self, "_on_failed_attempt")	
+			new_card_target.connect("successfull_attempt", self, "_on_successfull_attempt")		
+			#new_card_target.connect("card_moved", self, "_on_card_moved")		
 	emit_signal("add_cards")
 
+
+func _on_card_moved(card_instance) -> void:
+	emit_signal("start_timer")
+	print("movendo card")
+
+func _on_failed_attempt(bullet, target) -> void:
+	print("nao combinou")
+	failed_attempt += 1
+	
+func _on_successfull_attempt(bullet, target) -> void:
+	
+	successfull_attempt += 1	
+	bullet.set_position(Vector2(-220,0))
+	target.set_position(Vector2(-220,0))
+	print("combinou" + str(successfull_attempt)+ " de "+  str(total_cards/2) )
+	if successfull_attempt == total_cards/2:		
+		emit_signal("show_panel_information")
+		
+	#var restart_button: Button = $MarginContainer/VBoxContainer/BarContainer/Restart
+	
 
 func _reset_counters() -> void:
 	timer.stop()
@@ -314,6 +338,7 @@ func _reset_counters() -> void:
 	yield(get_tree().create_timer(1.0), "timeout") # temporary until set theme template
 	timer_label.text = "00:00"
 	failed_attempt = 0
+	successfull_attempt = 0
 
 
 func _toggle_fullscreen_button_icon() -> void:
@@ -417,17 +442,11 @@ func _on_window_size_changed() -> void:
 func _on_add_cards() -> void:
 	shuffle_cards()
 
-
-
-
 func _on_start_timer() -> void:
 	if not get_timer_has_started():
 		set_timer_has_starded(true)
 		timer.start()
 
-
-func _on_failed_attempt() -> void:
-	failed_attempt += 1
 
 
 func is_full_level() -> void:
@@ -494,6 +513,7 @@ func _on_FullScreen_pressed() -> void:
 
 func _on_show_PanelInformation() -> void:
 	timer.stop()
+
 	_update_panel_information()
 	panel_information.visible = true
 

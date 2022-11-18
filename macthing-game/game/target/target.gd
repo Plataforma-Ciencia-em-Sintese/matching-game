@@ -1,7 +1,9 @@
 extends TextureRect
 class_name Target
 
-var dropped_on_target : bool = false
+signal failed_attempt(bullet, target)
+signal successfull_attempt(bullet, target)
+
 var matching_id: int \
 		setget set_matching_id, get_matching_id
 var _front_image = null \
@@ -32,18 +34,22 @@ func get_front_image():
 
 	
 func can_drop_data(position, data):
-	if (self.matching_id == data["bullet"].matching_id):
-		return true
-	else:
-		return false	
+	return true
 
 		
 func drop_data(position, data):
+	if (self.matching_id == data["bullet"].matching_id):
+		data["bullet"].dropped_on_target = true
+		print("match")
+		emit_signal("successfull_attempt",data["bullet"], self)
+	else:
+		print(data["original_position"])
+		#data["bullet"].set_position(data["original_position"])
+		emit_signal("failed_attempt",data["bullet"], self)
+		
 	print(data)
-	texture = (data["origin_texture"])
+	#texture = (data["origin_texture"])
 	
-	#data["bullet"].set_position(self.get_position() + Vector2(100, 0))
-	data["bullet"].texture = null
-	print("mudando posicao de " + str(self.get_position() + Vector2(100, 0)))
+	
 	pass
 	

@@ -114,3 +114,5 @@ text = ""
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/turn = SubResource( 7 )
+
+[connection signal="successfull_attempt" from="." to="." method="_on_CardButton_successfull_attempt"]
