@@ -46,7 +46,7 @@ func _ready() -> void:
 	yield(self, "request_cards_completed")
 	# called upon completion of all requests
 	emit_signal("all_request_game_completed")
-
+	
 	# clear the result of the main request
 	set_resources(Dictionary())
 	
@@ -67,7 +67,7 @@ func get_resources() -> Dictionary:
 
 #  [PRIVATE_METHODS]
 func _request_main() -> void:
-	var url_parameters := URL.get_parameters("https://.../?id=27550&skip=0")
+	var url_parameters := URL.get_parameters("https://.../?id=27584&skip=0")
 	if url_parameters.has("id"):
 		var http_request: HTTPRequest = HTTPRequest.new()
 		add_child(http_request)
@@ -145,6 +145,7 @@ func _on_request_cards_step1(_result: int, response_code: int, _headers: PoolStr
 				if json.result.has("bibo:shortDescription"):
 					if json.result["bibo:shortDescription"][0].has("@value"):
 						subtitle = str(json.result["bibo:shortDescription"][0]["@value"])
+						print("encontoru subtitle"+subtitle)
 					else:
 						push_warning("RequestGameOmeka._on_request_cards_step1(): card subtitle, property not found")
 				else:
@@ -209,13 +210,15 @@ func _on_request_cards_final(_result: int, response_code: int, _headers: PoolStr
 		image_texture.create_from_image(image)
 		
 		if card_type == "bullet" :			
-			var bullets: Array = get_bullets()
+			var bullets: Array = get_bullets()			
+			print("legende"+subtitle)
 			bullets.append({"image": image_texture, "subtitle": subtitle, "matching_id": matching_id})
 			set_bullets(bullets)	
 			print("definindo bullets" + str(matching_id))
 			#print(bullets)	
 		else:
 			var targets: Array = get_targets()
+			print("legende"+subtitle)
 			targets.append({"image": image_texture, "subtitle": subtitle, "matching_id": matching_id})
 			set_targets(targets)			
 			print("definindo targets" + str(matching_id))	

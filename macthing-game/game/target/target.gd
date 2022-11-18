@@ -8,7 +8,12 @@ var matching_id: int \
 		setget set_matching_id, get_matching_id
 var _front_image = null \
 		setget set_front_image, get_front_image
+var _subtitle: String = "#legenda" \
+		setget set_subtitle, get_subtitle 
 		
+
+onready var subtitle_label := $Subtitle
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#add_to_group("DRAGGABLE")
@@ -17,7 +22,14 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+func set_subtitle(new_subtitle: String) -> void:
+	_subtitle = new_subtitle
+	subtitle_label.visible = true
+	subtitle_label.text =  new_subtitle
 
+func get_subtitle() -> String:
+	return _subtitle
+	
 func set_matching_id(id):
 	matching_id = id
 	

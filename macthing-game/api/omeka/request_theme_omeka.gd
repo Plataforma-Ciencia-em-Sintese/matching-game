@@ -69,7 +69,7 @@ func get_resources() -> Dictionary:
 
 #  [PRIVATE_METHODS]
 func _request_main() -> void:
-	var url_parameters := URL.get_parameters("https://.../?id=27550&skip=0")
+	var url_parameters := URL.get_parameters("https://.../?id=27584&skip=0")
 	if url_parameters.has("id"):
 		var http_request: HTTPRequest = HTTPRequest.new()
 		add_child(http_request)

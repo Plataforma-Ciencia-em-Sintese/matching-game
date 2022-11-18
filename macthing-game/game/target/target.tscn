@@ -9,7 +9,7 @@
 bg_color = Color( 0.4, 0.4, 0.4, 1 )
 
 [sub_resource type="DynamicFont" id=6]
-size = 24
+size = 23
 outline_size = 2
 outline_color = Color( 0, 0, 0, 1 )
 use_filter = true
@@ -86,7 +86,6 @@ texture = ExtResource( 5 )
 expand = true
 
 [node name="Subtitle" type="Label" parent="."]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 0.905
 margin_bottom = -0.400024

@@ -273,11 +273,11 @@ func _make_grid(mode: int):
 		GameMode.EASY:
 			#grid.columns = 4
 			total_cards = 12
-			card_size = Vector2(200, 200) #Vector2(256, 256)
+			card_size = Vector2(250, 250) #Vector2(256, 256)
 		GameMode.MEDIUM:
 			#grid.columns = 5
 			total_cards = 16
-			card_size = Vector2(180, 180) #Vector2(200, 200)
+			card_size = Vector2(200, 200) #Vector2(200, 200)
 		GameMode.HARD:
 			#grid.columns = 6
 			total_cards = 20
@@ -306,7 +306,10 @@ func _make_grid(mode: int):
 		if target.has("image"):
 			new_card_target.set_front_image(target["image"])
 			new_card_target.connect("failed_attempt", self, "_on_failed_attempt")	
-			new_card_target.connect("successfull_attempt", self, "_on_successfull_attempt")		
+			new_card_target.connect("successfull_attempt", self, "_on_successfull_attempt")	
+		if target.has("subtitle"):	
+			print("definindo legenda")
+			new_card_target.set_subtitle(target["subtitle"])	
 			#new_card_target.connect("card_moved", self, "_on_card_moved")		
 	emit_signal("add_cards")
 
