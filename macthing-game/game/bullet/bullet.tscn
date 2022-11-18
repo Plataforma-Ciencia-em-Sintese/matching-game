@@ -63,6 +63,7 @@ anchor_right = 0.5625
 anchor_bottom = 1.0
 rect_min_size = Vector2( 144, 160 )
 rect_pivot_offset = Vector2( 540, 540 )
+mouse_default_cursor_shape = 6
 expand = true
 script = ExtResource( 3 )
 __meta__ = {
