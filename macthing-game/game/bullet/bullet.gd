@@ -53,16 +53,19 @@ func get_drag_data(_position: Vector2):
 		var control = Control.new()
 		control.add_child(drag_texture)
 		drag_texture.rect_position = -0.5 * drag_texture.rect_size	
+		#self.modulate.a = 0
 		set_drag_preview(control)
 		return data
+	else:
+		self.modulate.a = 1
 
 func can_drop_data(position, data):
+	print("verificando")
 	return true
-	
-	
+		
 func drop_data(position, data):
 	#texture = null
-
+	self.modulate.a = 1
 	pass
 	
 

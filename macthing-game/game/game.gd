@@ -72,6 +72,7 @@ onready var show_panel_information := $ShowPanelInformation
 
 onready var tween = $Tween
 
+onready var resultados = $CenterContainer/resultados
 #  [OPTIONAL_BUILT-IN_VIRTUAL_METHOD]
 #func _init() -> void:
 #	pass
@@ -282,7 +283,7 @@ func _make_grid(mode: int):
 		GameMode.HARD:
 			#grid.columns = 6
 			total_cards = 20
-			card_size = Vector2(160, 160) #Vector2(180, 180)
+			card_size = Vector2(200,200) #Vector2(180, 180)
 	
 # warning-ignore:integer_division
 	for i in range(0, (total_cards/2)): # number of cards divided by 2 insertions		
@@ -317,34 +318,53 @@ func _make_grid(mode: int):
 
 func _on_card_moved(card_instance) -> void:
 	emit_signal("start_timer")
-	print("movendo card")
+	print("movendo card")	
+	card_instance.modulate.a = 0
 
 func _on_failed_attempt(bullet, target) -> void:
 	print("nao combinou")
+	
+	bullet.modulate.a = 1
 	failed_attempt += 1
 	
 
 func _on_successfull_attempt(bullet, target) -> void:
+	bullets.remove_child(bullet)
+	targets.remove_child(target)
+	resultados.add_child(target)
+	resultados.add_child(bullet)
+	resultados.visible = true
+	$CenterContainer.visible = true
 	
-	successfull_attempt += 1	
+	
+	bullet.modulate.a = 1
+	successfull_attempt += 1
 	#bullet.set_position(Vector2(-220,0))
-	bullet.set_position(target.get_position())
+	#bullet.set_position(target.get_position())
+	
 	var timeTween = create_tween()
-	print(self.rect_global_position)	
+	print(self.rect_global_position)
 	
 	timeTween.tween_property(bullet, "rect_global_position", OS.get_screen_size()/2 + Vector2(0,-250), 0.1)
 	timeTween.tween_property(target, "rect_global_position", OS.get_screen_size()/2 + Vector2(-450,-250), 0.1)
 	timeTween.parallel().tween_property(bullet, "rect_size",  Vector2(400,400), 0.1)
 	timeTween.parallel().tween_property(target, "rect_size",  Vector2(400,400), 0.1)
-	timeTween.tween_property(bullet, "rect_global_position", OS.get_screen_size()/2 + Vector2(0,-250), 0.5)
-	timeTween.tween_property(target, "rect_global_position", OS.get_screen_size()/2 + Vector2(-450,-250), 0.5)
-	timeTween.tween_property(bullet, "modulate:a",0.0 , 0.25)
-	timeTween.tween_property(target, "modulate:a",0.0 , 0.25)
+	timeTween.tween_property(bullet, "rect_global_position", OS.get_screen_size()/2 + Vector2(0,-250), 0.2)
+	timeTween.tween_property(target, "rect_global_position", OS.get_screen_size()/2 + Vector2(-450,-250), 0.2)
+	timeTween.tween_property(bullet, "modulate:a",0.0 , 0.2)
+	timeTween.tween_property(target, "modulate:a",0.0 , 0.2)
 	timeTween.tween_property(bullet, "rect_global_position",  Vector2(-2200,-2050), 0.001)
 	timeTween.tween_property(target, "rect_global_position",  Vector2(-2200,-2050), 0.001)
 
 	#yield(timeTween, 'tween_completed')
 	#bullet.set_position(Vector2(-2200,-2000))
+	
+	yield(get_tree().create_timer(1), "timeout")
+	
+	resultados.remove_child(target)
+	resultados.remove_child(bullet)
+	resultados.visible = false
+	$CenterContainer.visible = false
 	
 	#target.set_position(Vector2(-220,0))
 	print("combinou" + str(successfull_attempt)+ " de "+  str(total_cards/2) )
@@ -361,7 +381,6 @@ func _reset_counters() -> void:
 	timer_label.text = "00:00"
 	failed_attempt = 0
 	successfull_attempt = 0
-
 
 func _toggle_fullscreen_button_icon() -> void:
 	var fullscreen_on: String = ""
