@@ -279,9 +279,9 @@ func _make_grid(mode: int):
 	match(mode):
 		GameMode.EASY:
 			#grid.columns = 4
-			total_cards = 4
-			targets.columns = 2
-			bullets.columns = 2
+			total_cards = 12
+			targets.columns = 6
+			bullets.columns = 6
 			card_size = Vector2(300, 300) #Vector2(256, 256)
 		GameMode.MEDIUM:
 			#grid.columns = 5
