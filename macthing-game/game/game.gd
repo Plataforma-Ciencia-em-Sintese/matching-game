@@ -125,10 +125,7 @@ func set_current_mode(mode: int) -> void:
 	get_bullets().clear()
 	get_targets().clear()
 
-	print("pre-removendo resultados")
-	for child in resultados.get_children():
-		print("removendo resultados")
-		child.queue_free()
+	
 	print("pre-removendo bullets")
 	for child in bullets.get_children():
 		print("removendo bullets")
@@ -274,8 +271,16 @@ func _load_theme() -> void:
 
 func _make_grid(mode: int):
 	var card_size: Vector2 = Vector2.ZERO
+	print("pre-removendo resultados")
 	
+	#destroy resultados
 	resultados.visible = false
+	for i in resultados.get_children():
+		print("escondendo resultados make grid")
+		i.modulate.a = 0		
+		resultados.remove_child(i)		
+		i.queue_free()
+		
 	match(mode):
 		GameMode.EASY:
 			#grid.columns = 4
@@ -296,8 +301,6 @@ func _make_grid(mode: int):
 			total_cards = 20
 			card_size = Vector2(250,200) #Vector2(180, 180)
 			
-	print("limpando deck")
-	deck.get_children().clear()
 # warning-ignore:integer_division
 	for i in range(0, (total_cards/2)): # number of cards divided by 2 insertions		
 		var bullet: Dictionary = random_bullet()		
@@ -341,6 +344,19 @@ func _on_failed_attempt(bullet, target) -> void:
 	
 
 func _on_successfull_attempt(bullet, target) -> void:
+	
+	
+	#TODO manter as cartas pra nao diminuir o grid 
+	var blank_card := BulletButton.instance()	
+	blank_card.rect_min_size = bullet.rect_min_size
+	#bullet.replace_by(blank_card)
+	bullets.add_child_below_node(bullet,blank_card)	
+	
+	
+	var other_blank_card := TargetButton.instance()	
+	other_blank_card.rect_min_size = bullet.rect_min_size
+	targets.add_child_below_node(target,other_blank_card)
+	
 	bullets.remove_child(bullet)
 	targets.remove_child(target)
 	resultados.add_child(target)
@@ -363,8 +379,8 @@ func _on_successfull_attempt(bullet, target) -> void:
 	timeTween.tween_property(target, "rect_global_position", OS.get_screen_size()/2 + Vector2(-450,-250), 0.2)
 	timeTween.tween_property(bullet, "modulate:a",0.0 , 0.2)
 	timeTween.tween_property(target, "modulate:a",0.0 , 0.2)
-	#timeTween.tween_property(bullet, "rect_global_position",  Vector2(-2200,-2050), 0.001)
-	#timeTween.tween_property(target, "rect_global_position",  Vector2(-2200,-2050), 0.001)
+	timeTween.tween_property(bullet, "rect_global_position",  Vector2(-2200,-2050), 0.001)
+	timeTween.tween_property(target, "rect_global_position",  Vector2(-2200,-2050), 0.001)
 
 	resultados.visible = true
 	#yield(timeTween, 'tween_completed')
@@ -372,6 +388,7 @@ func _on_successfull_attempt(bullet, target) -> void:
 	
 	yield(get_tree().create_timer(1), "timeout")
 	resultados.visible = false
+		
 	resultados.remove_child(target)
 	resultados.remove_child(bullet)
 	deck.add_child(target)
@@ -411,21 +428,21 @@ func _scoring_rules() -> int:
 	
 	match(get_current_mode()):
 		GameMode.EASY:
-			target_attempt = 10
-			margin_attempt = 5
-			target_time = 40
+			target_attempt = 12
+			margin_attempt = 1
+			target_time = 15
 			margin_time = 10
 			
 		GameMode.MEDIUM:
-			target_attempt = 20
-			margin_attempt = 5
-			target_time = 70
+			target_attempt = 16
+			margin_attempt = 2
+			target_time = 30
 			margin_time = 10
 			
 		GameMode.HARD:
-			target_attempt = 30
-			margin_attempt = 5
-			target_time = 90
+			target_attempt = 16
+			margin_attempt = 3
+			target_time = 40
 			margin_time = 10
 	
 	# three stars
@@ -499,7 +516,7 @@ func _on_start_timer() -> void:
 		timer.start()
 
 func mostra_resultados():
-	resultados.visible = false
+	resultados.visible = true
 	print("o deck")		
 	for i in deck.get_children():
 		print("adding resultados final")
@@ -515,7 +532,9 @@ func esconde_resultados():
 		print("escondendo resultados final")
 		i.modulate.a = 0		
 		resultados.remove_child(i)
-		deck.add_child(i)
+				
+		i.queue_free()
+		deck.add_child(i)	
 		
 func is_full_level() -> void:
 	if successfull_attempt == total_cards/2:				

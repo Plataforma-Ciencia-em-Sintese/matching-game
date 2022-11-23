@@ -17,6 +17,8 @@ onready var subtitle_label := $Subtitle
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#add_to_group("DRAGGABLE")
+	
+	subtitle_label.visible = false
 	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -46,20 +48,26 @@ func get_front_image():
 
 	
 func can_drop_data(position, data):
+	
+	#print("verificando target ")
+	#print(data)
 	return true
 
 		
 func drop_data(position, data):
 	if (self.matching_id == data["bullet"].matching_id):
-		data["bullet"].dropped_on_target = true
+		#data["bullet"].dropped_on_target = true
 		print("match")
 		emit_signal("successfull_attempt",data["bullet"], self)
 	else:
 		print(data["original_position"])
-		#data["bullet"].set_position(data["original_position"])
+		data["bullet"].set_position(data["original_position"])
 		emit_signal("failed_attempt",data["bullet"], self)
-		
-	print(data)
+		print("nao match")
+	
+	self.modulate.a = 1
+	data["bullet"].modulate.a = 1
+	#print(data)
 	#texture = (data["origin_texture"])
 	
 	

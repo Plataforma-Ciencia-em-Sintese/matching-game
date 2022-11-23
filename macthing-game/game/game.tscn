@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=2]
+[gd_scene load_steps=69 format=2]
 
 [ext_resource path="res://assets/placeholder.png" type="Texture" id=1]
 [ext_resource path="res://game/game.gd" type="Script" id=2]
@@ -7,8 +7,6 @@
 [ext_resource path="res://assets/components/background/background.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/components/theme_button_icon/theme_button_icon.tscn" type="PackedScene" id=6]
 [ext_resource path="res://game/panel_information/panel_information.gd" type="Script" id=7]
-[ext_resource path="res://game/bullet/bullet.gd" type="Script" id=8]
-[ext_resource path="res://icon.png" type="Texture" id=9]
 
 [sub_resource type="DynamicFont" id=82]
 size = 86
@@ -1149,45 +1147,18 @@ margin_bottom = 544.0
 columns = 5
 
 [node name="painelDeResultados" type="GridContainer" parent="."]
+visible = false
 margin_left = 157.0
 margin_top = 157.0
 margin_right = 1684.0
 margin_bottom = 1073.0
-columns = 2
+columns = 4
 
 [node name="Panel" type="Panel" parent="painelDeResultados"]
+visible = false
 margin_right = 732.0
 margin_bottom = 603.0
 custom_styles/panel = SubResource( 10 )
-
-[node name="Bullet" type="TextureRect" parent="painelDeResultados"]
-margin_left = 736.0
-margin_right = 1468.0
-margin_bottom = 603.0
-texture = ExtResource( 9 )
-script = ExtResource( 8 )
-
-[node name="Bullet2" type="TextureRect" parent="painelDeResultados"]
-margin_top = 607.0
-margin_right = 732.0
-margin_bottom = 1210.0
-texture = ExtResource( 9 )
-script = ExtResource( 8 )
-
-[node name="Bullet3" type="TextureRect" parent="painelDeResultados"]
-margin_left = 736.0
-margin_top = 607.0
-margin_right = 1468.0
-margin_bottom = 1210.0
-texture = ExtResource( 9 )
-script = ExtResource( 8 )
-
-[node name="Bullet4" type="TextureRect" parent="painelDeResultados"]
-margin_top = 1214.0
-margin_right = 732.0
-margin_bottom = 1817.0
-texture = ExtResource( 9 )
-script = ExtResource( 8 )
 
 [node name="Timer" type="Timer" parent="."]
 
