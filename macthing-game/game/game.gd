@@ -1,3 +1,5 @@
+#TODO
+# mostrar os resultados com background branco
 #tool
 #class_name Name #, res://class_name_icon.svg
 extends Control
@@ -70,10 +72,11 @@ onready var total_stars = $PanelInformation/GlobalContainer/MarginContainer/VBox
 onready var total_time = $PanelInformation/GlobalContainer/MarginContainer/VBoxContainer/HBoxContainer/ResultContainer/StatisticsContainer/TimeContainer/TotalTime
 onready var total_attempts = $PanelInformation/GlobalContainer/MarginContainer/VBoxContainer/HBoxContainer/ResultContainer/StatisticsContainer/AttemptsContainer/TotalAttempts
 onready var show_panel_information := $ShowPanelInformation
+onready var painel_do_jogo = $MarginContainer/VBoxContainer/GameContainer
 
 onready var tween = $Tween
 
-onready var resultados = $painelDeResultados
+onready var resultados = $PanelContainer/painelDeResultados
 #  [OPTIONAL_BUILT-IN_VIRTUAL_METHOD]
 #func _init() -> void:
 #	pass
@@ -270,6 +273,7 @@ func _load_theme() -> void:
 
 
 func _make_grid(mode: int):
+	painel_do_jogo.visible = true
 	var card_size: Vector2 = Vector2.ZERO
 	print("pre-removendo resultados")
 	
@@ -310,8 +314,7 @@ func _make_grid(mode: int):
 		new_card.rect_min_size = card_size
 		new_card.set_matching_id(bullet["matching_id"])
 		if bullet.has("image"):
-			new_card.set_front_image(bullet["image"])
-			
+			new_card.set_front_image(bullet["image"])			
 			new_card.connect("card_moved", self, "_on_card_moved")		
 			
 	
@@ -323,15 +326,15 @@ func _make_grid(mode: int):
 		new_card_target.set_matching_id(target["matching_id"])
 		if target.has("image"):
 			new_card_target.set_front_image(target["image"])
-			new_card_target.connect("failed_attempt", self, "_on_failed_attempt")	
-			new_card_target.connect("successfull_attempt", self, "_on_successfull_attempt")	
+			
 		if target.has("subtitle"):	
 			print("definindo legenda")
 			new_card_target.set_subtitle(target["subtitle"])	
 			#new_card_target.connect("card_moved", self, "_on_card_moved")		
+
+		new_card_target.connect("failed_attempt", self, "_on_failed_attempt")	
+		new_card_target.connect("successfull_attempt", self, "_on_successfull_attempt")	
 	emit_signal("add_cards")
-
-
 func _on_card_moved(card_instance) -> void:
 	emit_signal("start_timer")
 	print("movendo card")	
@@ -339,24 +342,22 @@ func _on_card_moved(card_instance) -> void:
 
 func _on_failed_attempt(bullet, target) -> void:
 	print("nao combinou")	
-	bullet.modulate.a = 1
 	failed_attempt += 1
 	
 
 func _on_successfull_attempt(bullet, target) -> void:
 	
 	
-	#TODO manter as cartas pra nao diminuir o grid 
+	#mantem as cartas pra nao diminuir o grid 
 	var blank_card := BulletButton.instance()	
 	blank_card.rect_min_size = bullet.rect_min_size
 	#bullet.replace_by(blank_card)
-	bullets.add_child_below_node(bullet,blank_card)	
-	
-	
+	bullets.add_child_below_node(bullet,blank_card)		
 	var other_blank_card := TargetButton.instance()	
 	other_blank_card.rect_min_size = bullet.rect_min_size
 	targets.add_child_below_node(target,other_blank_card)
 	
+	#remove as cartas para depois mostrar nos resultados
 	bullets.remove_child(bullet)
 	targets.remove_child(target)
 	resultados.add_child(target)
@@ -531,8 +532,7 @@ func esconde_resultados():
 	for i in resultados.get_children():
 		print("escondendo resultados final")
 		i.modulate.a = 0		
-		resultados.remove_child(i)
-				
+		resultados.remove_child(i)				
 		i.queue_free()
 		deck.add_child(i)	
 		
@@ -597,6 +597,7 @@ func _on_show_PanelInformation() -> void:
 	timer.stop()
 
 	_update_panel_information()
+	painel_do_jogo.visible = false
 	panel_information.visible = true
 
 

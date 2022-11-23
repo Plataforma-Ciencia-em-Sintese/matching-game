@@ -36,17 +36,15 @@ func get_drag_data(_position: Vector2):
 	emit_signal("card_moved", self)
 	
 	var data = {}
-	data["origin_texture"] = texture
-	
-	data["bullet"] = self
-	
+	data["origin_texture"] = texture	
+	data["bullet"] = self	
 	data["original_position"] = get_global_mouse_position()
 	
 	#var dragPreview = DragPreview.new()
 	var drag_texture = TextureRect.new()
 	drag_texture.expand = true
 	drag_texture.texture = texture
-	drag_texture.rect_size = Vector2(100,100)
+	drag_texture.rect_size = Vector2(200,200)
 	
 	var control = Control.new()
 	control.add_child(drag_texture)

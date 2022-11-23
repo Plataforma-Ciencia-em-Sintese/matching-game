@@ -60,16 +60,12 @@ func drop_data(position, data):
 		print("match")
 		emit_signal("successfull_attempt",data["bullet"], self)
 	else:
-		print(data["original_position"])
-		data["bullet"].set_position(data["original_position"])
 		emit_signal("failed_attempt",data["bullet"], self)
-		print("nao match")
-	
-	self.modulate.a = 1
-	data["bullet"].modulate.a = 1
+		print("nao match" )
+		data["bullet"].modulate.a = 1
+		data["bullet"].visible = true
+		
 	#print(data)
 	#texture = (data["origin_texture"])
 	
-	
-	pass
 	
