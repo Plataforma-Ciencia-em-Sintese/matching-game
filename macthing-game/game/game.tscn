@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=2]
+[gd_scene load_steps=71 format=2]
 
 [ext_resource path="res://assets/placeholder.png" type="Texture" id=1]
 [ext_resource path="res://game/game.gd" type="Script" id=2]
@@ -7,6 +7,8 @@
 [ext_resource path="res://assets/components/background/background.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/components/theme_button_icon/theme_button_icon.tscn" type="PackedScene" id=6]
 [ext_resource path="res://game/panel_information/panel_information.gd" type="Script" id=7]
+[ext_resource path="res://game/bullet/bullet.gd" type="Script" id=8]
+[ext_resource path="res://icon.png" type="Texture" id=9]
 
 [sub_resource type="DynamicFont" id=82]
 size = 86
@@ -769,8 +771,6 @@ corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 anti_aliasing_size = 1.339
 
-[sub_resource type="Theme" id=111]
-
 [sub_resource type="DynamicFont" id=29]
 size = 28
 use_filter = true
@@ -990,6 +990,12 @@ script = ExtResource( 2 )
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = -725.0
+margin_top = -18.0
+margin_right = 753.0
+margin_bottom = 276.0
+grow_horizontal = 0
+grow_vertical = 0
 custom_constants/margin_right = 229
 custom_constants/margin_top = 25
 custom_constants/margin_left = 229
@@ -1000,14 +1006,15 @@ __meta__ = {
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 margin_left = 229.0
 margin_top = 25.0
-margin_right = 1691.0
-margin_bottom = 1080.0
+margin_right = 3169.0
+margin_bottom = 1374.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 5
 
 [node name="BarContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-margin_right = 1462.0
+margin_left = 739.0
+margin_right = 2201.0
 margin_bottom = 122.0
 rect_min_size = Vector2( 1462, 120 )
 size_flags_horizontal = 4
@@ -1116,54 +1123,71 @@ selected_color = 1
 
 [node name="GameContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 self_modulate = Color( 1, 1, 1, 0 )
-margin_left = 731.0
-margin_top = 585.0
-margin_right = 731.0
-margin_bottom = 597.0
+margin_left = 1470.0
+margin_top = 200.0
+margin_right = 1470.0
+margin_bottom = 744.0
 size_flags_horizontal = 4
 size_flags_vertical = 6
 custom_styles/panel = SubResource( 9 )
 
 [node name="Panel" type="Panel" parent="MarginContainer/VBoxContainer/GameContainer"]
-margin_bottom = 12.0
+margin_bottom = 544.0
 custom_styles/panel = SubResource( 10 )
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/GameContainer"]
-margin_bottom = 12.0
-
-[node name="HFlowContainer" type="HFlowContainer" parent="MarginContainer/VBoxContainer/GameContainer/MarginContainer"]
-margin_bottom = 12.0
+margin_bottom = 544.0
 
 [node name="VSplitContainer" type="VSplitContainer" parent="MarginContainer/VBoxContainer/GameContainer/MarginContainer"]
-margin_bottom = 12.0
+margin_bottom = 544.0
 
-[node name="bullets" type="HBoxContainer" parent="MarginContainer/VBoxContainer/GameContainer/MarginContainer/VSplitContainer"]
+[node name="targets" type="GridContainer" parent="MarginContainer/VBoxContainer/GameContainer/MarginContainer/VSplitContainer"]
 
-[node name="targets" type="HBoxContainer" parent="MarginContainer/VBoxContainer/GameContainer/MarginContainer/VSplitContainer"]
+[node name="bullets" type="GridContainer" parent="MarginContainer/VBoxContainer/GameContainer/MarginContainer/VSplitContainer"]
 margin_top = 12.0
-margin_bottom = 12.0
+margin_bottom = 544.0
+columns = 5
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
-visible = false
+[node name="painelDeResultados" type="GridContainer" parent="."]
 margin_left = 157.0
 margin_top = 157.0
 margin_right = 1684.0
 margin_bottom = 1073.0
+columns = 2
 
-[node name="Panel" type="Panel" parent="CenterContainer"]
-margin_left = 763.0
-margin_top = 458.0
-margin_right = 763.0
-margin_bottom = 458.0
+[node name="Panel" type="Panel" parent="painelDeResultados"]
+margin_right = 732.0
+margin_bottom = 603.0
 custom_styles/panel = SubResource( 10 )
 
-[node name="resultados" type="HBoxContainer" parent="CenterContainer"]
-visible = false
-margin_left = 763.0
-margin_top = 458.0
-margin_right = 763.0
-margin_bottom = 458.0
-theme = SubResource( 111 )
+[node name="Bullet" type="TextureRect" parent="painelDeResultados"]
+margin_left = 736.0
+margin_right = 1468.0
+margin_bottom = 603.0
+texture = ExtResource( 9 )
+script = ExtResource( 8 )
+
+[node name="Bullet2" type="TextureRect" parent="painelDeResultados"]
+margin_top = 607.0
+margin_right = 732.0
+margin_bottom = 1210.0
+texture = ExtResource( 9 )
+script = ExtResource( 8 )
+
+[node name="Bullet3" type="TextureRect" parent="painelDeResultados"]
+margin_left = 736.0
+margin_top = 607.0
+margin_right = 1468.0
+margin_bottom = 1210.0
+texture = ExtResource( 9 )
+script = ExtResource( 8 )
+
+[node name="Bullet4" type="TextureRect" parent="painelDeResultados"]
+margin_top = 1214.0
+margin_right = 732.0
+margin_bottom = 1817.0
+texture = ExtResource( 9 )
+script = ExtResource( 8 )
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -1518,6 +1542,8 @@ __meta__ = {
 }
 
 [node name="Tween" type="Tween" parent="."]
+
+[node name="deck" type="Node" parent="."]
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/BarContainer/Home" to="." method="_on_Home_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/BarContainer/FullScreen" to="." method="_on_FullScreen_pressed"]

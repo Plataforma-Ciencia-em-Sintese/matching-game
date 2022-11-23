@@ -57,6 +57,7 @@ onready var HowToPlay := preload("res://how_to_play/how_to_play.tscn")
 onready var bullets := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/VSplitContainer/bullets"
 
 onready var targets := $"MarginContainer/VBoxContainer/GameContainer/MarginContainer/VSplitContainer/targets"
+onready var deck = $deck
 
 onready var timer_label := $"MarginContainer/VBoxContainer/BarContainer/Container/Time"
 onready var level_label := $"MarginContainer/VBoxContainer/BarContainer/Container/Level"
@@ -72,7 +73,7 @@ onready var show_panel_information := $ShowPanelInformation
 
 onready var tween = $Tween
 
-onready var resultados = $CenterContainer/resultados
+onready var resultados = $painelDeResultados
 #  [OPTIONAL_BUILT-IN_VIRTUAL_METHOD]
 #func _init() -> void:
 #	pass
@@ -81,7 +82,6 @@ onready var resultados = $CenterContainer/resultados
 #  [BUILT-IN_VURTUAL_METHOD]
 func _ready() -> void:
 	_load_theme()
-	
 	connect("add_cards", self, "_on_add_cards")
 	connect("failed_attempt", self, "_on_failed_attempt")
 	connect("successfull_attempt", self, "_on_successfull_attempt")
@@ -125,6 +125,10 @@ func set_current_mode(mode: int) -> void:
 	get_bullets().clear()
 	get_targets().clear()
 
+	print("pre-removendo resultados")
+	for child in resultados.get_children():
+		print("removendo resultados")
+		child.queue_free()
 	print("pre-removendo bullets")
 	for child in bullets.get_children():
 		print("removendo bullets")
@@ -271,20 +275,29 @@ func _load_theme() -> void:
 func _make_grid(mode: int):
 	var card_size: Vector2 = Vector2.ZERO
 	
+	resultados.visible = false
 	match(mode):
 		GameMode.EASY:
 			#grid.columns = 4
-			total_cards = 12
-			card_size = Vector2(250, 250) #Vector2(256, 256)
+			total_cards = 4
+			targets.columns = 2
+			bullets.columns = 2
+			card_size = Vector2(300, 300) #Vector2(256, 256)
 		GameMode.MEDIUM:
 			#grid.columns = 5
+			targets.columns = 4
+			bullets.columns = 4
 			total_cards = 16
-			card_size = Vector2(200, 200) #Vector2(200, 200)
+			card_size = Vector2(300, 200) #Vector2(200, 200)
 		GameMode.HARD:
 			#grid.columns = 6
+			targets.columns = 5
+			bullets.columns = 5
 			total_cards = 20
-			card_size = Vector2(200,200) #Vector2(180, 180)
-	
+			card_size = Vector2(250,200) #Vector2(180, 180)
+			
+	print("limpando deck")
+	deck.get_children().clear()
 # warning-ignore:integer_division
 	for i in range(0, (total_cards/2)): # number of cards divided by 2 insertions		
 		var bullet: Dictionary = random_bullet()		
@@ -322,8 +335,7 @@ func _on_card_moved(card_instance) -> void:
 	card_instance.modulate.a = 0
 
 func _on_failed_attempt(bullet, target) -> void:
-	print("nao combinou")
-	
+	print("nao combinou")	
 	bullet.modulate.a = 1
 	failed_attempt += 1
 	
@@ -333,8 +345,6 @@ func _on_successfull_attempt(bullet, target) -> void:
 	targets.remove_child(target)
 	resultados.add_child(target)
 	resultados.add_child(bullet)
-	resultados.visible = true
-	$CenterContainer.visible = true
 	
 	
 	bullet.modulate.a = 1
@@ -353,23 +363,23 @@ func _on_successfull_attempt(bullet, target) -> void:
 	timeTween.tween_property(target, "rect_global_position", OS.get_screen_size()/2 + Vector2(-450,-250), 0.2)
 	timeTween.tween_property(bullet, "modulate:a",0.0 , 0.2)
 	timeTween.tween_property(target, "modulate:a",0.0 , 0.2)
-	timeTween.tween_property(bullet, "rect_global_position",  Vector2(-2200,-2050), 0.001)
-	timeTween.tween_property(target, "rect_global_position",  Vector2(-2200,-2050), 0.001)
+	#timeTween.tween_property(bullet, "rect_global_position",  Vector2(-2200,-2050), 0.001)
+	#timeTween.tween_property(target, "rect_global_position",  Vector2(-2200,-2050), 0.001)
 
+	resultados.visible = true
 	#yield(timeTween, 'tween_completed')
 	#bullet.set_position(Vector2(-2200,-2000))
 	
 	yield(get_tree().create_timer(1), "timeout")
-	
+	resultados.visible = false
 	resultados.remove_child(target)
 	resultados.remove_child(bullet)
-	resultados.visible = false
-	$CenterContainer.visible = false
+	deck.add_child(target)
+	deck.add_child(bullet)
 	
 	#target.set_position(Vector2(-220,0))
 	print("combinou" + str(successfull_attempt)+ " de "+  str(total_cards/2) )
-	if successfull_attempt == total_cards/2:		
-		emit_signal("show_panel_information")
+	is_full_level()
 		
 	#var restart_button: Button = $MarginContainer/VBoxContainer/BarContainer/Restart
 	
@@ -488,18 +498,30 @@ func _on_start_timer() -> void:
 		set_timer_has_starded(true)
 		timer.start()
 
+func mostra_resultados():
+	resultados.visible = false
+	print("o deck")		
+	for i in deck.get_children():
+		print("adding resultados final")
+		i.modulate.a = 1
+		i.visible = true
+		deck.remove_child(i)
+		resultados.add_child(i)
 
-
+func esconde_resultados():
+	resultados.visible = false
+	print("o deck")		
+	for i in resultados.get_children():
+		print("escondendo resultados final")
+		i.modulate.a = 0		
+		resultados.remove_child(i)
+		deck.add_child(i)
+		
 func is_full_level() -> void:
-	var remaining_pairs_counter: int = 0
-	
-	for card in targets.get_children():
-			if not card.get_state() == card.State.COMPLETED:
-				remaining_pairs_counter += 1
-	
-	if remaining_pairs_counter == 0:
-		yield(get_tree().create_timer(1.0), "timeout")
+	if successfull_attempt == total_cards/2:				
+		mostra_resultados()
 		emit_signal("show_panel_information")
+		
 
 
 func _on_Restart_pressed() -> void:
@@ -590,6 +612,8 @@ func _on_Hide_pressed() -> void:
 			
 	panel_information.visible = false
 	show_panel_information.visible = true
+	print("mostrando rsults")
+	mostra_resultados()
 
 
 func _on_ShowPanelInformation_pressed() -> void:
@@ -598,6 +622,9 @@ func _on_ShowPanelInformation_pressed() -> void:
 			child.disabled = false
 	show_panel_information.visible = false
 	panel_information.visible = true
+	
+	print("escondendo rsults")
+	esconde_resultados()
 
 
 func _on_Help_pressed() -> void:
