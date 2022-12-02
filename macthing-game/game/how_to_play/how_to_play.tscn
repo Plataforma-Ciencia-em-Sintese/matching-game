@@ -4,7 +4,7 @@
 [ext_resource path="res://assets/themes/default/how_to_play2.png" type="Texture" id=2]
 [ext_resource path="res://assets/themes/default/how_to_play1.png" type="Texture" id=3]
 [ext_resource path="res://assets/fonts/FredokaOne/FredokaOne-Regular.ttf" type="DynamicFontData" id=4]
-[ext_resource path="res://how_to_play/how_to_play.gd" type="Script" id=5]
+[ext_resource path="res://game/how_to_play/how_to_play.gd" type="Script" id=5]
 [ext_resource path="res://assets/themes/default/how_to_play3.png" type="Texture" id=6]
 [ext_resource path="res://assets/components/theme_button_icon/theme_button_icon.tscn" type="PackedScene" id=7]
 
